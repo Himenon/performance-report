@@ -24,3 +24,7 @@ jobs:
           yarn exectime -c "yarn test" -n "yarn:test"
           yarn exectime -c "yarn build" -n "yarn:build"
           yarn check:merge
+        env:
+          CI: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EXECTIME_OUTPUT_PATH: exectime.json
