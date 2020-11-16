@@ -7,11 +7,10 @@ import * as Exectime from "./exectime";
 import * as Config from "./config";
 const pkg = require("../../package.json");
 
-export { Config };
-
 const generateHideComment = (value: string): string => `<!-- ${value} -->`;
 
-export const createPerformanceReport = async (taskId: string, isSync: boolean): Promise<void> => {
+export const createPerformanceReport = async (isPullRequest: boolean): Promise<void> => {
+  const taskId = isPullRequest ? Config.taskId.pr : Config.taskId.merge;
   const meta = GitHubActions.generateMeta();
   const filesize: PerformanceReport.Filesize.InitialParams = {
     snapshot: {
@@ -57,11 +56,12 @@ export const createPerformanceReport = async (taskId: string, isSync: boolean): 
 
   const report = await PerformanceReport.generate(config);
 
-  const text = [report.markdown.exectime, report.markdown.filesize, generateHideComment(taskId)].join(EOL + EOL);
+  if (isPullRequest) {
+    const text = [report.markdown.exectime, report.markdown.filesize, generateHideComment(taskId)].join(EOL + EOL);
+    await GitHubActions.createOrUpdateComment(text, taskId);
+  }
 
-  await GitHubActions.createOrUpdateComment(text, taskId);
-
-  if (isSync) {
+  if (!isPullRequest) {
     await report.sync();
   }
 

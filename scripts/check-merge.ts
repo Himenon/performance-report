@@ -1,6 +1,6 @@
-import { createPerformanceReport, Config } from "./tools/check-perf";
+import { createPerformanceReport } from "./tools/check-perf";
 
-createPerformanceReport(Config.taskId.merge, true).catch(error => {
+createPerformanceReport(false).catch(error => {
   console.error(error);
   process.exit(1);
 });
