@@ -18,6 +18,9 @@ jobs:
       - name: Auto version update
         run: |
           git config --global user.email "actions@gihub.com"
-          git config --global user.name "gh-actions"
+          git config --global user.name "github-actions[bot]"
           yarn install --frozen-lockfile
           yarn lerna:version:up
+          yarn exectime -c "yarn test" -n "yarn:test"
+          yarn exectime -c "yarn build" -n "yarn:build"
+          yarn check:merge

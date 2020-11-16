@@ -13,7 +13,11 @@ export interface Config {
   };
   applicationRoot: string;
   workingDirectory: string;
-  gitConfig: GitControl.IO.Config;
+  git: {
+    config: GitControl.IO.Config;
+    username: string;
+    email: string;
+  };
   commitMessage?: string;
 }
 
@@ -34,31 +38,13 @@ export interface Report {
   clearWorkingDirectory: () => void;
 }
 
-export const generateMeta = async ({
-  rootPath,
-  repo,
-  owner,
-}: {
-  rootPath: string;
-  repo: string;
-  owner: string;
-}): Promise<{ git: Meta.Git }> => {
-  const appCmd = GitControl.Command.create(rootPath);
-  return {
-    git: {
-      branch: (await appCmd.getBranch(rootPath)).stdout,
-      sha: (await appCmd.getHeadCommitSha(rootPath)).stdout + "2",
-      repoName: repo,
-      owner: owner,
-    },
-  };
-};
-
 export const generate = async (params: Config): Promise<Report> => {
-  const { workingDirectory, gitConfig, reporter } = params;
+  const { workingDirectory, git, reporter } = params;
   const cmd = GitControl.Command.create(workingDirectory);
-  const io = GitControl.IO.create({ cmd, config: gitConfig, protocol: "https", workingDir: workingDirectory });
+  const io = GitControl.IO.create({ cmd, config: git.config, protocol: "https", workingDir: workingDirectory });
   await io.setup();
+  await io.setConfig("user.name", git.username, "local");
+  await io.setConfig("user.email", git.email, "local");
   const comparison: Comparison = {};
   const markdown: Markdown = {};
   if (reporter.filesize) {

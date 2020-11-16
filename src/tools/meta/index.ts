@@ -1,5 +1,5 @@
 export interface Git {
-  branch: string;
+  ref: string;
   mergeDateAt?: string;
   owner: string;
   repoName: string;

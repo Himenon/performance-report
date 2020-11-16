@@ -99,7 +99,7 @@ export const createSnapshotRepository = <G extends Group>(filename: string): Rep
       return snapshot.histories
         .sort((a, b) => compareDate(a.meta.git.mergeDateAt, b.meta.git.mergeDateAt))
         .find(history => {
-          return history.meta.git.branch === query.branch;
+          return history.meta.git.ref === query.ref;
         });
     },
   };

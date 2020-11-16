@@ -1,4 +1,7 @@
 export const decorateUnit = (value: number, unit: string): string => {
+  if (isNaN(value)) {
+    return "NaN";
+  }
   return `${value.toFixed(2)} ${unit}`;
 };
 
