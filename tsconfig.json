@@ -12,9 +12,10 @@
     "skipLibCheck": true,
     "sourceMap": false,
     "target": "esnext",
-    "lib": ["dom", "es2020"],
+    "lib": ["dom", "es2019", "es2020", "esnext"],
     "rootDir": ".",
     "outDir": "lib",
-    "strict": true
+    "strict": true,
+    "resolveJsonModule": true
   }
 }

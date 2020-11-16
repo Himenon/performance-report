@@ -1,4 +1,4 @@
-# @himenon/node-lib-template
+# @himenon/perfor
 
 ## Usage
 
@@ -26,4 +26,4 @@
 
 ## LICENCE
 
-[@himenon-node-lib-template](https://github.com/Himenon/node-lib-template)・MIT
+[@himenon-perfor](https://github.com/Himenon/perfor)・MIT
