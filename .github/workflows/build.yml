@@ -14,7 +14,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
         with:
-          ref: default
+          ref: main
       - name: Use Node.js ${{ matrix.node-version }}
         id: build
         uses: actions/setup-node@v2-beta
@@ -31,4 +31,5 @@ jobs:
           yarn check:perf
         env:
           CI: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           EXECTIME_OUTPUT_PATH: exectime.json

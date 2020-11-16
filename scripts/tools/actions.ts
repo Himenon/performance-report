@@ -2,7 +2,7 @@ import * as core from "@actions/core";
 import { context, getOctokit } from "@actions/github";
 
 export const notify = async (body: string): Promise<void> => {
-  const token = core.getInput("github-token", { required: true });
+  const token = core.getInput("GITHUB_TOKEN", { required: true });
   const github = getOctokit(token);
 
   await github.issues.createComment({
