@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.1.3"></a>
+## 0.1.3 (2020-11-16)
+
+
+### Chores
+
+* eolを追加 ([#7](https://github.com/Himenon/performance-report/issues/7)) ([c7d67e5](https://github.com/Himenon/performance-report/commit/c7d67e5))
+
+
+
+
+
 <a name="0.1.2"></a>
 ## 0.1.2 (2020-11-16)
 
