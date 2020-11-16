@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.1.2"></a>
+## 0.1.2 (2020-11-16)
+
+
+### Chores
+
+* change default branch ([#6](https://github.com/Himenon/performance-report/issues/6)) ([5c109ff](https://github.com/Himenon/performance-report/commit/5c109ff))
+
+
+
+
+
 <a name="0.1.1"></a>
 ## 0.1.1 (2020-11-16)
 
