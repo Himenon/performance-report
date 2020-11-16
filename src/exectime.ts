@@ -1,3 +1,4 @@
+import { EOL } from "os";
 import MarkdownTable from "markdown-table";
 import { createSnapshotRepository, Exectime as Target, History, Meta, findPreviousGroup, findPreviousItem } from "./tools/index";
 
@@ -80,14 +81,14 @@ export const create = ({ results, meta, snapshot }: InitialParams): Report => {
     getMarkdownComparisons: () => {
       const groupComparisons = getGroupComparisons();
       const section = (title: string, body: string) => {
-        return [`## Exectime - ${title}`, body].join("\n");
+        return [`## Exectime - ${title}`, body].join(EOL);
       };
       const sections = Object.entries(groupComparisons).map(([groupName, comparisons]) => {
         const data = [Target.markdownTableHeader].concat(comparisons.map(Target.generateMarkdownRow));
         const body = MarkdownTable(data, { align: Target.markdownTableAlign });
         return section(groupName, body);
       });
-      return sections.join("\n");
+      return sections.join(EOL);
     },
     update: () => {
       repository.addSnapshot(nextHistory);

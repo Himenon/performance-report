@@ -16,25 +16,19 @@ jobs:
         with:
           ref: default
       - name: Use Node.js ${{ matrix.node-version }}
+        id: build
         uses: actions/setup-node@v2-beta
         with:
           node-version: "12"
           check-latest: true
-      - run: yarn
-      - run: yarn exectime -c "echo 'hello'" --show settings
-      - run: yarn exectime -c "yarn test" -n "yarn:test"
-      - run: yarn exectime -c "yarn build" -n "yarn:build"
+      - run: |
+          git config --global user.email "actions@gihub.com"
+          git config --global user.name "gh-actions"
+          yarn
+          yarn exectime -c "echo 'hello'" --show settings
+          yarn exectime -c "yarn test" -n "yarn:test"
+          yarn exectime -c "yarn build" -n "yarn:build"
+          yarn check:perf
         env:
           CI: true
           EXECTIME_OUTPUT_PATH: exectime.json
-      - name: Send Message
-        uses: actions/github-script@v3
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            github.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: '👋 Thanks for reporting!'
-            })

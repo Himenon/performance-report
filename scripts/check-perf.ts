@@ -1,9 +1,11 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
+import { EOL } from "os";
 import * as path from "path";
 import * as GitControl from "@himenon/git-control-js";
 import * as PerformanceReport from "../lib";
 import * as fs from "fs";
 import * as Exectime from "@himenon/exectime";
+import * as GitHubActions from "./tools/actions";
 const pkg = require("../package.json");
 
 const applicationRoot = path.join(__dirname, "../");
@@ -54,6 +56,7 @@ const main = async () => {
 
   const result = getExecTimeJson();
 
+  await GitHubActions.notify("hey!");
   const exectime: PerformanceReport.Exectime.InitialParams = {
     snapshot: {
       filename: path.join(workingDirectory, pkg.name, "exectime.json"),
@@ -77,9 +80,13 @@ const main = async () => {
     applicationRoot,
     workingDirectory,
   };
-
   const report = await PerformanceReport.generate(config);
+  const text = [report.markdown.exectime, report.markdown.filesize].join(EOL);
+  await GitHubActions.notify(text);
   report.clearWorkingDirectory();
 };
 
-main().catch(console.error);
+main().catch(error => {
+  console.error(error);
+  process.exit(1);
+});
