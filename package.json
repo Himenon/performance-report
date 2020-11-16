@@ -1,6 +1,6 @@
 {
   "name": "@himenon/performance-report",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "private": true,
   "description": "generate file size diff from github",
   "keywords": [

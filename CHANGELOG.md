@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.1.4"></a>
+## 0.1.4 (2020-11-16)
+
+
+### Bug Fixes
+
+* ci environment ([#8](https://github.com/Himenon/performance-report/issues/8)) ([edd95ac](https://github.com/Himenon/performance-report/commit/edd95ac))
+
+
+
+
+
 <a name="0.1.3"></a>
 ## 0.1.3 (2020-11-16)
 
