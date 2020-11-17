@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.2.0"></a>
+# 0.2.0 (2020-11-17)
+
+
+### Features
+
+* detect base reference ([#20](https://github.com/Himenon/performance-report/issues/20)) ([ec476d9](https://github.com/Himenon/performance-report/commit/ec476d9))
+
+
+
+
+
 <a name="0.1.11"></a>
 ## 0.1.11 (2020-11-17)
 
