@@ -32,4 +32,5 @@ jobs:
         env:
           CI: true
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          DATALAKE_GITHUB_TOKEN: ${{ secrets.DATALAKE_GITHUB_TOKEN }}
           EXECTIME_OUTPUT_PATH: exectime.json

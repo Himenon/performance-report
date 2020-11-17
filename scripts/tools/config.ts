@@ -9,7 +9,7 @@ export const gitConfig: PerformanceReport.GitParams = {
     baseUrl: "https://github.com",
     baseSsh: "git@github.com",
     protocol: "https",
-    authToken: process.env.GITHUB_TOKEN,
+    authToken: process.env.DATALAKE_GITHUB_TOKEN,
   },
   username: "github-actions[bot]",
   email: "actions@gihub.com",
