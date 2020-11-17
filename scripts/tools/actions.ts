@@ -1,63 +1,29 @@
-import { context as githubActionContext, getOctokit } from "@actions/github";
+import { Octokit } from "@octokit/rest";
+import { getEnv } from "./env";
 
 const botName = "github-actions[bot]";
 
-export interface Option {
-  isLocal: boolean;
-}
-
-export const create = (option: Option) => {
-  const github = !option.isLocal ? getOctokit(process.env.GITHUB_TOKEN!) : ({} as ReturnType<typeof getOctokit>);
-
-  const getContext = (isLocal: boolean): typeof githubActionContext => {
-    if (isLocal) {
-      return {
-        ref: "main",
-        sha: "a303ed3",
-        issue: {
-          number: 1,
-          owner: "Himenon",
-          repo: "performance-report",
-        },
-        repo: {
-          owner: "Himenon",
-          repo: "performance-report",
-        },
-      } as typeof githubActionContext;
-    }
-    return githubActionContext;
-  };
-
-  const context = getContext(option.isLocal);
-
-  const getBaseReference = (isPullRequest: boolean): string => {
-    if (option.isLocal) {
-      return "main";
-    }
-    if (isPullRequest) {
-      return process.env.GITHUB_BASE_REF!; // = main
-    }
-    return context.ref.replace("refs/heads/", ""); // context.ref = refs/heads/main
-  };
+export const create = () => {
+  const { issueNumber, repoOwner, repoName, baseRef, commitSha, githubToken } = getEnv();
+  const github = new Octokit({
+    auth: githubToken,
+  });
 
   const notify = async (body: string): Promise<void> => {
     await github.issues.createComment({
-      issue_number: context.issue.number,
-      owner: context.repo.owner,
-      repo: context.repo.repo,
+      issue_number: issueNumber,
+      owner: repoOwner,
+      repo: repoName,
       body: body,
     });
   };
 
   const createOrUpdateComment = async (message: string, taskId: string): Promise<void> => {
-    if (option.isLocal) {
-      return;
-    }
     const comments = (
       await github.issues.listComments({
-        owner: context.repo.owner,
-        repo: context.repo.repo,
-        issue_number: context.issue.number,
+        owner: repoOwner,
+        repo: repoName,
+        issue_number: issueNumber,
       })
     ).data.filter(comment => {
       if (taskId) {
@@ -68,8 +34,8 @@ export const create = (option: Option) => {
     if (comments.length > 0) {
       const firstComment = comments[0];
       await github.issues.updateComment({
-        owner: context.repo.owner,
-        repo: context.repo.repo,
+        owner: repoOwner,
+        repo: repoName,
         comment_id: firstComment.id,
         body: message,
       });
@@ -78,20 +44,19 @@ export const create = (option: Option) => {
     }
   };
 
-  const generateMeta = (isPullRequest: boolean) => {
+  const generateMeta = () => {
     return {
       git: {
-        ref: getBaseReference(isPullRequest),
-        sha: context.sha,
-        repoName: context.repo.repo,
-        owner: context.repo.owner,
+        ref: baseRef,
+        sha: commitSha,
+        repoName: repoName,
+        owner: repoOwner,
       },
     };
   };
 
   return {
     notify,
-    getBaseReference,
     createOrUpdateComment,
     generateMeta,
   };

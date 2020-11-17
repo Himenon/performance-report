@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
-import * as fs from "fs";
 import { EOL } from "os";
 import * as path from "path";
 import * as PerformanceReport from "../../lib";
 import * as GitHubActions from "./actions";
 import * as Exectime from "./exectime";
 import * as Config from "./config";
+import { setEnv, getEnv } from "./env";
 const pkg = require("../../package.json");
 
 const generateHideComment = (value: string): string => `<!-- ${value} -->`;
@@ -16,9 +16,13 @@ export interface Option {
 }
 
 export const createPerformanceReport = async ({ isPullRequest, isLocal }: Option): Promise<void> => {
+  if (!isLocal) {
+    setEnv({ isPullRequest });
+  }
+  const { baseRef, datalakeGitHubToken } = getEnv();
   const taskId = isPullRequest ? Config.taskId.pr : Config.taskId.merge;
-  const gitHubActions = GitHubActions.create({ isLocal });
-  const meta = gitHubActions.generateMeta(isPullRequest);
+  const gitHubActions = GitHubActions.create();
+  const meta = gitHubActions.generateMeta();
 
   const option: PerformanceReport.Option = {
     snapshot: {
@@ -35,7 +39,7 @@ export const createPerformanceReport = async ({ isPullRequest, isLocal }: Option
   const query = {
     git: {
       base: {
-        ref: gitHubActions.getBaseReference(isPullRequest),
+        ref: baseRef,
       },
     },
   };
@@ -109,7 +113,7 @@ export const createPerformanceReport = async ({ isPullRequest, isLocal }: Option
       filesize,
       exectime,
     },
-    git: Config.gitConfig,
+    git: Config.gitConfig(datalakeGitHubToken),
     applicationRoot: Config.applicationRoot,
     workingDirectory: Config.workingDirectory,
   };
@@ -118,11 +122,7 @@ export const createPerformanceReport = async ({ isPullRequest, isLocal }: Option
 
   if (isPullRequest) {
     const text = [report.markdown.exectime, report.markdown.filesize, generateHideComment(taskId)].join(EOL + EOL);
-    if (isLocal) {
-      fs.writeFileSync(".debug/comment.md", text, { encoding: "utf-8" });
-    } else {
-      await gitHubActions.createOrUpdateComment(text, taskId);
-    }
+    await gitHubActions.createOrUpdateComment(text, taskId);
   }
 
   if (!isPullRequest && !isLocal) {

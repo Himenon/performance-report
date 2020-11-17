@@ -1,7 +1,7 @@
 import * as path from "path";
 import * as PerformanceReport from "../../lib";
 
-export const gitConfig: PerformanceReport.GitParams = {
+export const gitConfig = (authToken?: string): PerformanceReport.GitParams => ({
   config: {
     owner: "Himenon",
     repo: "performance-datalake",
@@ -9,11 +9,11 @@ export const gitConfig: PerformanceReport.GitParams = {
     baseUrl: "https://github.com",
     baseSsh: "git@github.com",
     protocol: "https",
-    authToken: process.env.DATALAKE_GITHUB_TOKEN,
+    authToken,
   },
   username: "github-actions[bot]",
   email: "actions@gihub.com",
-};
+});
 
 export const applicationRoot = path.join(__dirname, "../../");
 export const workingDirectory = path.join(applicationRoot, ".perf");
