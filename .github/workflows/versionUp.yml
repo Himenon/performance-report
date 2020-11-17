@@ -16,7 +16,7 @@ jobs:
         with:
           node-version: "12.x"
       - name: Auto version update
-        run: |
+      - run: |
           git config --global user.email "actions@gihub.com"
           git config --global user.name "github-actions[bot]"
           yarn install --frozen-lockfile

@@ -1,4 +1,4 @@
-# @himenon/perfor
+# @himenon/performance-report
 
 ## Usage
 
@@ -26,4 +26,4 @@
 
 ## LICENCE
 
-[@himenon-perfor](https://github.com/Himenon/perfor)・MIT
+[@@himenon/performance-report](https://github.com/Himenon/performance-report)・MIT

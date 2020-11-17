@@ -49,7 +49,7 @@ export const createPerformanceReport = async (isPullRequest: boolean): Promise<v
       filesize,
       exectime,
     },
-    git: Config.git,
+    git: Config.gitConfig,
     applicationRoot: Config.applicationRoot,
     workingDirectory: Config.workingDirectory,
   };

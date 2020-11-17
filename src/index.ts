@@ -6,18 +6,20 @@ import * as rimraf from "rimraf";
 
 export { Meta, Exectime, Filesize };
 
+export interface GitParams {
+  config: Omit<GitControl.IO.Params, "cmd" | "workingDir" | "outputDir">;
+  username: string;
+  email: string;
+}
+
 export interface Config {
   reporter: {
     exectime?: Exectime.InitialParams;
     filesize?: Filesize.InitialParams;
   };
+  git: GitParams;
   applicationRoot: string;
   workingDirectory: string;
-  git: {
-    config: GitControl.IO.Config;
-    username: string;
-    email: string;
-  };
   commitMessage?: string;
 }
 
@@ -41,7 +43,7 @@ export interface Report {
 export const generate = async (params: Config): Promise<Report> => {
   const { workingDirectory, git, reporter } = params;
   const cmd = GitControl.Command.create(workingDirectory);
-  const io = GitControl.IO.create({ cmd, config: git.config, protocol: "https", workingDir: workingDirectory });
+  const io = GitControl.IO.create({ ...git.config, workingDir: workingDirectory, cmd });
   await io.setup();
   await io.setConfig("user.name", git.username, "local");
   await io.setConfig("user.email", git.email, "local");
@@ -59,8 +61,8 @@ export const generate = async (params: Config): Promise<Report> => {
     markdown.exectime = exectime.getMarkdownComparisons();
     exectime.update();
   }
-  await io.save();
-  await io.commit(params.commitMessage || "chore: update performance data.");
+  await io.addAll();
+  await io.createCommit(params.commitMessage || "chore: update performance data.");
   return {
     comparison,
     markdown,
