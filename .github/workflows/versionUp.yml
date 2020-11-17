@@ -14,6 +14,10 @@ jobs:
           ref: main
       - name: Setup tmate session
         uses: mxschmitt/action-tmate@v3
+        env:
+          CI: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EXECTIME_OUTPUT_PATH: exectime.json
       - name: Version Up
         uses: actions/setup-node@v1
         with:
