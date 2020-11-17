@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.1.8"></a>
+## 0.1.8 (2020-11-17)
+
+
+### Continuous Integrations
+
+* add tmate ([#13](https://github.com/Himenon/performance-report/issues/13)) ([c9ef217](https://github.com/Himenon/performance-report/commit/c9ef217))
+
+
+
+
+
 <a name="0.1.7"></a>
 ## 0.1.7 (2020-11-17)
 
