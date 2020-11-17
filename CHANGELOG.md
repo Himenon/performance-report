@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.1.10"></a>
+## 0.1.10 (2020-11-17)
+
+
+### Bug Fixes
+
+* output file path ([#18](https://github.com/Himenon/performance-report/issues/18)) ([c878334](https://github.com/Himenon/performance-report/commit/c878334))
+
+
+
+
+
 <a name="0.1.9"></a>
 ## 0.1.9 (2020-11-17)
 
