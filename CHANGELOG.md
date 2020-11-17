@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.1.11"></a>
+## 0.1.11 (2020-11-17)
+
+
+### Continuous Integrations
+
+* show context ([#19](https://github.com/Himenon/performance-report/issues/19)) ([64b4739](https://github.com/Himenon/performance-report/commit/64b4739))
+
+
+
+
+
 <a name="0.1.10"></a>
 ## 0.1.10 (2020-11-17)
 
