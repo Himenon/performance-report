@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.1.9"></a>
+## 0.1.9 (2020-11-17)
+
+
+### Bug Fixes
+
+* github-control-js ([#16](https://github.com/Himenon/performance-report/issues/16)) ([c50e6cc](https://github.com/Himenon/performance-report/commit/c50e6cc))
+
+
+
+
+
 <a name="0.1.8"></a>
 ## 0.1.8 (2020-11-17)
 
