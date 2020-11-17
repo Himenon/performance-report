@@ -9,16 +9,33 @@ const pkg = require("../../package.json");
 
 const generateHideComment = (value: string): string => `<!-- ${value} -->`;
 
-export const createPerformanceReport = async (isPullRequest: boolean): Promise<void> => {
+export interface Option {
+  isPullRequest: boolean;
+  isLocal: boolean;
+}
+
+export const createPerformanceReport = async ({ isPullRequest, isLocal }: Option): Promise<void> => {
   const taskId = isPullRequest ? Config.taskId.pr : Config.taskId.merge;
-  const meta = GitHubActions.generateMeta(isPullRequest);
+  const gitHubActions = GitHubActions.create({ isLocal });
+  const meta = gitHubActions.generateMeta(isPullRequest);
+
+  const option: PerformanceReport.Option = {
+    snapshot: {
+      minimize: true,
+    },
+    filesize: {
+      applicationRoot: Config.applicationRoot,
+    },
+  };
+
   const query = {
     git: {
       base: {
-        ref: GitHubActions.getBaseReference(isPullRequest),
+        ref: gitHubActions.getBaseReference(isPullRequest),
       },
     },
   };
+
   const filesize: PerformanceReport.Filesize.InitialParams = {
     snapshot: {
       filename: path.join(Config.workingDirectory, pkg.name, Config.snapshot.filesize),
@@ -63,16 +80,18 @@ export const createPerformanceReport = async (isPullRequest: boolean): Promise<v
     workingDirectory: Config.workingDirectory,
   };
 
-  const report = await PerformanceReport.generate(config);
+  const report = await PerformanceReport.generate(config, option);
 
-  if (isPullRequest) {
+  if (isPullRequest && !isLocal) {
     const text = [report.markdown.exectime, report.markdown.filesize, generateHideComment(taskId)].join(EOL + EOL);
-    await GitHubActions.createOrUpdateComment(text, taskId);
+    await gitHubActions.createOrUpdateComment(text, taskId);
   }
 
-  if (!isPullRequest) {
+  if (!isPullRequest && !isLocal) {
     await report.sync();
   }
 
-  report.clearWorkingDirectory();
+  if (!isLocal) {
+    report.clearWorkingDirectory();
+  }
 };

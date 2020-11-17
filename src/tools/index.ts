@@ -20,13 +20,24 @@ export interface History<G extends Group> {
   };
 }
 
+export interface SnapshotMeta {
+  version: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface InitialParams {
+  filename: string;
+}
+
 export interface Snapshot<G extends Group> {
-  meta: {
-    version: string;
-    createdAt: string;
-    updatedAt: string;
-  };
+  meta: SnapshotMeta;
   histories: History<G>[];
+}
+
+export interface Option {
+  /** default: true, JSON.stringify option */
+  minimize: boolean;
 }
 
 export interface Query {
@@ -46,7 +57,7 @@ export interface Repository<G extends Group> {
   getLatestHistory: (query: Query) => History<G> | undefined;
 }
 
-export const createSnapshotRepository = <G extends Group>(filename: string): Repository<G> => {
+export const createSnapshotRepository = <G extends Group>({ filename }: InitialParams, option: Option = { minimize: true }): Repository<G> => {
   const createDefaultSnapShpt = (): Snapshot<G> => ({
     meta: {
       version: "",
@@ -95,7 +106,8 @@ export const createSnapshotRepository = <G extends Group>(filename: string): Rep
       if (!existParentDirectory) {
         fs.mkdirSync(parentDirectory, { recursive: true });
       }
-      fs.writeFileSync(filename, JSON.stringify(snapshot, null, 2), { encoding: "utf-8" });
+      const text = option && option.minimize ? JSON.stringify(snapshot) : JSON.stringify(snapshot, null, 2);
+      fs.writeFileSync(filename, text, { encoding: "utf-8" });
       return filename;
     },
     addSnapshot: newHistory => {

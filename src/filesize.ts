@@ -1,6 +1,17 @@
+import * as path from "path";
 import { EOL } from "os";
 import MarkdownTable from "markdown-table";
-import { createSnapshotRepository, Filesize as Target, History, Meta, findPreviousGroup, findPreviousItem, Query } from "./tools";
+import {
+  createSnapshotRepository,
+  Filesize as Target,
+  History,
+  Meta,
+  findPreviousGroup,
+  findPreviousItem,
+  Query,
+  Option as SnapshotOption,
+  InitialParams as SnapshotInitialParams,
+} from "./tools";
 
 export interface Package {
   name: string;
@@ -13,9 +24,7 @@ export interface Package {
 }
 
 export interface InitialParams {
-  snapshot: {
-    filename: string;
-  };
+  snapshot: SnapshotInitialParams;
   query: Query;
   meta: {
     git: Meta.Git;
@@ -31,12 +40,16 @@ export interface Report {
   update: () => string | undefined;
 }
 
-const generateGroup = (pkg: Package): Target.Group => {
+export interface GroupOption {
+  applicationRoot?: string;
+}
+
+const generateGroup = (pkg: Package, option: GroupOption = {}): Target.Group => {
   const items: Target.Item[] = Object.entries(pkg.items).map(([name, item]) => {
     const profile = Target.generateProfile(item.absolutePath);
     return {
       name,
-      path: item.absolutePath,
+      path: option.applicationRoot ? path.relative(option.applicationRoot, item.absolutePath) : item.absolutePath,
       sizeByte: profile.sizeByte,
       gzipSizeByte: profile.gzipSizeByte,
     };
@@ -50,11 +63,16 @@ const generateGroup = (pkg: Package): Target.Group => {
 
 export const TableHeader: string[] = ["**File**", "**Filesize Diff**", "**Current Size**", "**Prev Size**", "**ENV**", "compare"];
 
-export const create = ({ packages, meta, snapshot, query }: InitialParams): Report => {
-  const repository = createSnapshotRepository<Target.Group>(snapshot.filename);
+export interface Option {
+  snapshot?: SnapshotOption;
+  filesize?: GroupOption;
+}
+
+export const create = ({ packages, meta, snapshot, query }: InitialParams, option: Option): Report => {
+  const repository = createSnapshotRepository<Target.Group>(snapshot, option.snapshot);
 
   const nextGroups = packages.reduce<{ [groupName: string]: Target.Group }>((all, pkg) => {
-    return { ...all, [pkg.name]: generateGroup(pkg) };
+    return { ...all, [pkg.name]: generateGroup(pkg, option.filesize) };
   }, {});
 
   const nextHistory: History<Target.Group> = {

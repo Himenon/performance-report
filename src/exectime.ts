@@ -1,6 +1,16 @@
 import { EOL } from "os";
 import MarkdownTable from "markdown-table";
-import { createSnapshotRepository, Exectime as Target, History, Meta, findPreviousGroup, findPreviousItem, Query } from "./tools/index";
+import {
+  createSnapshotRepository,
+  Exectime as Target,
+  History,
+  Meta,
+  findPreviousGroup,
+  findPreviousItem,
+  Query,
+  Option as SnapshotOption,
+  InitialParams as SnapshotInitialParams,
+} from "./tools/index";
 
 export interface Measurement {
   [name: string]: {
@@ -16,9 +26,7 @@ export interface Result {
 }
 
 export interface InitialParams {
-  snapshot: {
-    filename: string;
-  };
+  snapshot: SnapshotInitialParams;
   query: Query;
   meta: {
     git: Meta.Git;
@@ -52,8 +60,12 @@ const generateGroup = (result: Result): Target.Group => {
   };
 };
 
-export const create = ({ results, meta, snapshot, query }: InitialParams): Report => {
-  const repository = createSnapshotRepository<Target.Group>(snapshot.filename);
+export interface Option {
+  snapshot?: SnapshotOption;
+}
+
+export const create = ({ results, meta, snapshot, query }: InitialParams, option: Option): Report => {
+  const repository = createSnapshotRepository<Target.Group>(snapshot, option.snapshot);
 
   const nextGroups = results.reduce<{ [groupName: string]: Target.Group }>((all, result) => {
     return { ...all, [result.name]: generateGroup(result) };
