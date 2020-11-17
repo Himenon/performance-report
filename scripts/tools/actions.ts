@@ -9,7 +9,7 @@ export const getBaseReference = (isPullRequest: boolean): string => {
   if (isPullRequest) {
     return process.env.GITHUB_BASE_REF!; // = main
   }
-  return context.ref.replace("refs/heads", ""); // context.ref = refs/heads/main
+  return context.ref.replace("refs/heads/", ""); // context.ref = refs/heads/main
 };
 
 export const notify = async (body: string): Promise<void> => {
