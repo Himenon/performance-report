@@ -14,7 +14,7 @@ export const createPerformanceReport = async (isPullRequest: boolean): Promise<v
   const meta = GitHubActions.generateMeta();
   const filesize: PerformanceReport.Filesize.InitialParams = {
     snapshot: {
-      filename: path.join(Config.workingDirectory, pkg.name, Config.snapshot.exectime),
+      filename: path.join(Config.workingDirectory, pkg.name, Config.snapshot.filesize),
     },
     meta,
     packages: [

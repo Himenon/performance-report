@@ -6,7 +6,7 @@ on:
 
 jobs:
   auto-version-up:
-    # if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -20,6 +20,7 @@ jobs:
           git config --global user.email "actions@gihub.com"
           git config --global user.name "github-actions[bot]"
           yarn install --frozen-lockfile
+          yarn lerna:version:up
       - run: |
           yarn exectime -c "yarn test" -n "yarn:test"
           yarn exectime -c "yarn build" -n "yarn:build"
