@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
+import * as fs from "fs";
 import { EOL } from "os";
 import * as path from "path";
 import * as PerformanceReport from "../../lib";
@@ -26,6 +27,9 @@ export const createPerformanceReport = async ({ isPullRequest, isLocal }: Option
     filesize: {
       applicationRoot: Config.applicationRoot,
     },
+    exectime: {
+      averageList: [2, "all"],
+    },
   };
 
   const query = {
@@ -44,11 +48,41 @@ export const createPerformanceReport = async ({ isPullRequest, isLocal }: Option
     query,
     packages: [
       {
-        name: `${pkg.name}`,
+        name: `${pkg.name}-seed`,
         version: `${pkg.version}`,
         items: {
           "package.json": {
             absolutePath: path.join(Config.applicationRoot, "package.json"),
+          },
+        },
+      },
+      {
+        name: `${pkg.name}-cjs`,
+        version: `${pkg.version}`,
+        items: {
+          "$cjs/index.js": {
+            absolutePath: path.join(Config.applicationRoot, "lib/$cjs/index.js"),
+          },
+          "$cjs/exectime.js": {
+            absolutePath: path.join(Config.applicationRoot, "lib/$cjs/exectime.js"),
+          },
+          "$cjs/filesize.js": {
+            absolutePath: path.join(Config.applicationRoot, "lib/$cjs/filesize.js"),
+          },
+        },
+      },
+      {
+        name: `${pkg.name}-esm`,
+        version: `${pkg.version}`,
+        items: {
+          "$esm/index.js": {
+            absolutePath: path.join(Config.applicationRoot, "lib/$esm/index.js"),
+          },
+          "$esm/exectime.js": {
+            absolutePath: path.join(Config.applicationRoot, "lib/$esm/exectime.js"),
+          },
+          "$esm/filesize.js": {
+            absolutePath: path.join(Config.applicationRoot, "lib/$esm/filesize.js"),
           },
         },
       },
@@ -82,9 +116,13 @@ export const createPerformanceReport = async ({ isPullRequest, isLocal }: Option
 
   const report = await PerformanceReport.generate(config, option);
 
-  if (isPullRequest && !isLocal) {
+  if (isPullRequest) {
     const text = [report.markdown.exectime, report.markdown.filesize, generateHideComment(taskId)].join(EOL + EOL);
-    await gitHubActions.createOrUpdateComment(text, taskId);
+    if (isLocal) {
+      fs.writeFileSync(".debug/comment.md", text, { encoding: "utf-8" });
+    } else {
+      await gitHubActions.createOrUpdateComment(text, taskId);
+    }
   }
 
   if (!isPullRequest && !isLocal) {

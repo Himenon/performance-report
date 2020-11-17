@@ -51,6 +51,7 @@ export interface Query {
 export interface Repository<G extends Group> {
   update: () => string | undefined;
   addSnapshot: (newHistory: History<G>) => void;
+  getHistories: (query: Query) => History<G>[];
   /**
    * Using base branch reference
    */
@@ -99,6 +100,14 @@ export const createSnapshotRepository = <G extends Group>({ filename }: InitialP
     return !!snapshot.histories.find(history => history.meta.git.sha === sha);
   };
 
+  const getHistories = (query: Query) => {
+    return snapshot.histories
+      .sort((a, b) => compareDate(a.meta.git.mergeDateAt, b.meta.git.mergeDateAt))
+      .filter(history => {
+        return history.meta.git.ref === query.git.base.ref;
+      });
+  };
+
   return {
     update: () => {
       const parentDirectory = path.dirname(filename);
@@ -118,12 +127,11 @@ export const createSnapshotRepository = <G extends Group>({ filename }: InitialP
       snapshot.meta.updatedAt = new Date().toISOString();
       snapshot.histories.push(newHistory);
     },
+    getHistories,
     getLatestHistory: (query: Query) => {
-      return snapshot.histories
-        .sort((a, b) => compareDate(a.meta.git.mergeDateAt, b.meta.git.mergeDateAt))
-        .find(history => {
-          return history.meta.git.ref === query.git.base.ref;
-        });
+      return getHistories(query).find(history => {
+        return history.meta.git.ref === query.git.base.ref;
+      });
     },
   };
 };

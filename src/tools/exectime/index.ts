@@ -43,15 +43,29 @@ export const markdownTableHeader: string[] = ["**Command**", "**Time diff**", "*
 
 export const markdownTableAlign: string[] = ["l", "r", "r", "r", "r", "r", "r"];
 
-const msToSec = (ms: number): number => {
+const msToSec = (ms: number | undefined): number => {
+  if (ms === undefined) {
+    return NaN;
+  }
   return ms / 1000;
 };
 
-export const generateMarkdownRow = (c: Comparison): string[] => {
+export interface AdditionalColumn {
+  /** average Diff */
+  averageDiff: Array<(Comparison & { averageTimes: number | "all" | undefined }) | undefined>;
+}
+
+export const generateMarkdownRow = (c: Comparison, additionalColumn: AdditionalColumn): string[] => {
+  const averageColumn = additionalColumn.averageDiff
+    .map(additionalComparison => [
+      decorateUnit(msToSec(additionalComparison && additionalComparison.currentExecuteDurationMs), "sec"),
+      decorateDiffText(additionalComparison && additionalComparison.execCommandDurationDiff, "%"),
+    ])
+    .flat();
   return [
     c.execCommandName,
     decorateDiffText(c.execCommandDurationDiff, "%"),
     decorateUnit(msToSec(c.prevExecuteDurationMs), "sec"),
     decorateUnit(msToSec(c.currentExecuteDurationMs), "sec"),
-  ];
+  ].concat(averageColumn);
 };

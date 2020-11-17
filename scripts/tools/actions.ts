@@ -12,16 +12,16 @@ export const create = (option: Option) => {
   const getContext = (isLocal: boolean): typeof githubActionContext => {
     if (isLocal) {
       return {
-        ref: "refs/head/main",
-        sha: "dummy-sha",
+        ref: "main",
+        sha: "a303ed3",
         issue: {
           number: 1,
-          owner: "dummy-owner",
-          repo: "dummy-repo",
+          owner: "Himenon",
+          repo: "performance-report",
         },
         repo: {
-          owner: "dummy-owner",
-          repo: "dummy-repo",
+          owner: "Himenon",
+          repo: "performance-report",
         },
       } as typeof githubActionContext;
     }
@@ -31,6 +31,9 @@ export const create = (option: Option) => {
   const context = getContext(option.isLocal);
 
   const getBaseReference = (isPullRequest: boolean): string => {
+    if (option.isLocal) {
+      return "main";
+    }
     if (isPullRequest) {
       return process.env.GITHUB_BASE_REF!; // = main
     }

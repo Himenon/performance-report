@@ -60,7 +60,7 @@ export const generate = async (params: Config, option: Option = {}): Promise<Rep
     filesize.update();
   }
   if (reporter.exectime) {
-    const exectime = Exectime.create(reporter.exectime, { snapshot: option.snapshot });
+    const exectime = Exectime.create(reporter.exectime, { snapshot: option.snapshot, exectime: option.exectime });
     comparison.exectime = exectime.getGroupComparisons();
     markdown.exectime = exectime.getMarkdownComparisons();
     exectime.update();

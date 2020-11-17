@@ -5,7 +5,10 @@ export const decorateUnit = (value: number, unit: string): string => {
   return `${value.toFixed(2)} ${unit}`;
 };
 
-export const decorateDiffText = (value: number, unit: string): string => {
+export const decorateDiffText = (value: number | undefined, unit: string): string => {
+  if (value === undefined) {
+    return "NaN";
+  }
   if (isNaN(value)) {
     return "NaN";
   }

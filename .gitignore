@@ -9,3 +9,4 @@ private_npm_cache
 .perf
 exectime.json
 .actions
+.debug
