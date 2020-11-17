@@ -490,10 +490,10 @@
     execa "4.1.0"
     uuid "8.3.1"
 
-"@himenon/git-control-js@0.4.1":
-  version "0.4.1"
-  resolved "https://registry.yarnpkg.com/@himenon/git-control-js/-/git-control-js-0.4.1.tgz#ed03d08f047ef1425a00433dce44051b85a834d6"
-  integrity sha512-wVvKP/gdtJK3b6eIRJMxQKquKtB71Uk6/e18uFcsnKLInlcMCk2nCNTC0UGH++jCNGxGcyx5TtgXEqDtSKTlxQ==
+"@himenon/git-control-js@0.5.1":
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/@himenon/git-control-js/-/git-control-js-0.5.1.tgz#1ab640d1031346d777d4060ef7176d60a79add80"
+  integrity sha512-tzAbDPm3PYW/p1g5HFErMlvXBcWmIhIpO5inKJR1EYNte1Dbv60nK1/43u84BmP3XT2d6ZgONPkqPyVomzFZqQ==
   dependencies:
     execa "4.1.0"
     rimraf "3.0.2"
