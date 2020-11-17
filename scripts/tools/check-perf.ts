@@ -11,11 +11,11 @@ const generateHideComment = (value: string): string => `<!-- ${value} -->`;
 
 export const createPerformanceReport = async (isPullRequest: boolean): Promise<void> => {
   const taskId = isPullRequest ? Config.taskId.pr : Config.taskId.merge;
-  const meta = GitHubActions.generateMeta();
+  const meta = GitHubActions.generateMeta(isPullRequest);
   const query = {
     git: {
       base: {
-        ref: process.env.GITHUB_BASE_REF!,
+        ref: GitHubActions.getBaseReference(isPullRequest),
       },
     },
   };

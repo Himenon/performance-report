@@ -5,10 +5,12 @@ const github = getOctokit(process.env.GITHUB_TOKEN!);
 
 const botName = "github-actions[bot]";
 
-console.log({
-  GITHUB_HEAD_REF: process.env.GITHUB_HEAD_REF,
-  GITHUB_BASE_REF: process.env.GITHUB_BASE_REF,
-});
+export const getBaseReference = (isPullRequest: boolean): string => {
+  if (isPullRequest) {
+    return process.env.GITHUB_BASE_REF!; // = main
+  }
+  return context.ref.replace("refs/heads", ""); // context.ref = refs/heads/main
+};
 
 export const notify = async (body: string): Promise<void> => {
   await github.issues.createComment({
@@ -45,10 +47,10 @@ export const createOrUpdateComment = async (message: string, taskId: string): Pr
   }
 };
 
-export const generateMeta = () => {
+export const generateMeta = (isPullRequest: boolean) => {
   return {
     git: {
-      ref: process.env.GITHUB_BASE_REF!,
+      ref: getBaseReference(isPullRequest),
       sha: context.sha,
       repoName: context.repo.repo,
       owner: context.repo.owner,
