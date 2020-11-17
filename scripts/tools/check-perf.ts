@@ -12,11 +12,19 @@ const generateHideComment = (value: string): string => `<!-- ${value} -->`;
 export const createPerformanceReport = async (isPullRequest: boolean): Promise<void> => {
   const taskId = isPullRequest ? Config.taskId.pr : Config.taskId.merge;
   const meta = GitHubActions.generateMeta();
+  const query = {
+    git: {
+      base: {
+        ref: process.env.GITHUB_BASE_REF!,
+      },
+    },
+  };
   const filesize: PerformanceReport.Filesize.InitialParams = {
     snapshot: {
       filename: path.join(Config.workingDirectory, pkg.name, Config.snapshot.filesize),
     },
     meta,
+    query,
     packages: [
       {
         name: `${pkg.name}`,
@@ -35,6 +43,7 @@ export const createPerformanceReport = async (isPullRequest: boolean): Promise<v
       filename: path.join(Config.workingDirectory, pkg.name, Config.snapshot.exectime),
     },
     meta,
+    query,
     results: [
       {
         name: pkg.name,

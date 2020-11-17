@@ -29,10 +29,21 @@ export interface Snapshot<G extends Group> {
   histories: History<G>[];
 }
 
+export interface Query {
+  git: {
+    base: {
+      ref: string;
+    };
+  };
+}
+
 export interface Repository<G extends Group> {
   update: () => string | undefined;
   addSnapshot: (newHistory: History<G>) => void;
-  getLatestHistory: (query: Partial<Meta.Git>) => History<G> | undefined;
+  /**
+   * Using base branch reference
+   */
+  getLatestHistory: (query: Query) => History<G> | undefined;
 }
 
 export const createSnapshotRepository = <G extends Group>(filename: string): Repository<G> => {
@@ -95,11 +106,11 @@ export const createSnapshotRepository = <G extends Group>(filename: string): Rep
       snapshot.meta.updatedAt = new Date().toISOString();
       snapshot.histories.push(newHistory);
     },
-    getLatestHistory: query => {
+    getLatestHistory: (query: Query) => {
       return snapshot.histories
         .sort((a, b) => compareDate(a.meta.git.mergeDateAt, b.meta.git.mergeDateAt))
         .find(history => {
-          return history.meta.git.ref === query.ref;
+          return history.meta.git.ref === query.git.base.ref;
         });
     },
   };

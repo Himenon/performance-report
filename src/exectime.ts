@@ -1,6 +1,6 @@
 import { EOL } from "os";
 import MarkdownTable from "markdown-table";
-import { createSnapshotRepository, Exectime as Target, History, Meta, findPreviousGroup, findPreviousItem } from "./tools/index";
+import { createSnapshotRepository, Exectime as Target, History, Meta, findPreviousGroup, findPreviousItem, Query } from "./tools/index";
 
 export interface Measurement {
   [name: string]: {
@@ -19,6 +19,7 @@ export interface InitialParams {
   snapshot: {
     filename: string;
   };
+  query: Query;
   meta: {
     git: Meta.Git;
   };
@@ -51,7 +52,7 @@ const generateGroup = (result: Result): Target.Group => {
   };
 };
 
-export const create = ({ results, meta, snapshot }: InitialParams): Report => {
+export const create = ({ results, meta, snapshot, query }: InitialParams): Report => {
   const repository = createSnapshotRepository<Target.Group>(snapshot.filename);
 
   const nextGroups = results.reduce<{ [groupName: string]: Target.Group }>((all, result) => {
@@ -63,7 +64,7 @@ export const create = ({ results, meta, snapshot }: InitialParams): Report => {
     groups: nextGroups,
   };
 
-  const previousHistory = repository.getLatestHistory(nextHistory.meta.git);
+  const previousHistory = repository.getLatestHistory(query);
 
   const getGroupComparisons = (): GroupComparisons => {
     return Object.entries(nextHistory.groups).reduce<GroupComparisons>((all, [currentGroupName, currentGroup]) => {

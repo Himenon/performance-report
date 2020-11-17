@@ -5,6 +5,11 @@ const github = getOctokit(process.env.GITHUB_TOKEN!);
 
 const botName = "github-actions[bot]";
 
+console.log({
+  GITHUB_HEAD_REF: process.env.GITHUB_HEAD_REF,
+  GITHUB_BASE_REF: process.env.GITHUB_BASE_REF,
+});
+
 export const notify = async (body: string): Promise<void> => {
   await github.issues.createComment({
     issue_number: context.issue.number,
@@ -43,7 +48,7 @@ export const createOrUpdateComment = async (message: string, taskId: string): Pr
 export const generateMeta = () => {
   return {
     git: {
-      ref: context.ref,
+      ref: process.env.GITHUB_BASE_REF!,
       sha: context.sha,
       repoName: context.repo.repo,
       owner: context.repo.owner,

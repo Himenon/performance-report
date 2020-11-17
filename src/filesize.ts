@@ -1,6 +1,6 @@
 import { EOL } from "os";
 import MarkdownTable from "markdown-table";
-import { createSnapshotRepository, Filesize as Target, History, Meta, findPreviousGroup, findPreviousItem } from "./tools";
+import { createSnapshotRepository, Filesize as Target, History, Meta, findPreviousGroup, findPreviousItem, Query } from "./tools";
 
 export interface Package {
   name: string;
@@ -16,6 +16,7 @@ export interface InitialParams {
   snapshot: {
     filename: string;
   };
+  query: Query;
   meta: {
     git: Meta.Git;
   };
@@ -49,7 +50,7 @@ const generateGroup = (pkg: Package): Target.Group => {
 
 export const TableHeader: string[] = ["**File**", "**Filesize Diff**", "**Current Size**", "**Prev Size**", "**ENV**", "compare"];
 
-export const create = ({ packages, meta, snapshot }: InitialParams): Report => {
+export const create = ({ packages, meta, snapshot, query }: InitialParams): Report => {
   const repository = createSnapshotRepository<Target.Group>(snapshot.filename);
 
   const nextGroups = packages.reduce<{ [groupName: string]: Target.Group }>((all, pkg) => {
@@ -61,7 +62,7 @@ export const create = ({ packages, meta, snapshot }: InitialParams): Report => {
     groups: nextGroups,
   };
 
-  const previousHistory = repository.getLatestHistory(nextHistory.meta.git);
+  const previousHistory = repository.getLatestHistory(query);
 
   const getGroupComparisons = (): GroupComparisons => {
     return Object.entries(nextHistory.groups).reduce<GroupComparisons>((all, [currentGroupName, currentGroup]) => {
