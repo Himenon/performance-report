@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.4.1"></a>
+## 0.4.1 (2020-11-18)
+
+
+### Code Refactoring
+
+* 変数名の調整 ([#26](https://github.com/Himenon/performance-report/issues/26)) ([e2466e2](https://github.com/Himenon/performance-report/commit/e2466e2))
+
+
+
+
+
 <a name="0.4.0"></a>
 # 0.4.0 (2020-11-18)
 
