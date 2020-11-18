@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.5.0"></a>
+# 0.5.0 (2020-11-18)
+
+
+### Features
+
+* Repositoryの整理とSnapshotとの分離 ([#27](https://github.com/Himenon/performance-report/issues/27)) ([78aca0f](https://github.com/Himenon/performance-report/commit/78aca0f))
+
+
+
+
+
 <a name="0.4.1"></a>
 ## 0.4.1 (2020-11-18)
 
