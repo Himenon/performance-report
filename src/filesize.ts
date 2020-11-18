@@ -70,10 +70,10 @@ export interface Option {
   filesize?: GroupOption;
 }
 
-export const create = ({ groups: packages, meta, snapshot, query }: InitialParams, option: Option): Report => {
+export const create = ({ groups, meta, snapshot, query }: InitialParams, option: Option): Report => {
   const repository = createSnapshotRepository<Target.Group>(snapshot, option.snapshot);
 
-  const nextGroups = packages.reduce<{ [groupName: string]: Target.Group }>((all, pkg) => {
+  const nextGroups = groups.reduce<{ [groupName: string]: Target.Group }>((all, pkg) => {
     return { ...all, [pkg.name]: generateGroup(pkg, option.filesize) };
   }, {});
 

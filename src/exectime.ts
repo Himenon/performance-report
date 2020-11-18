@@ -67,11 +67,11 @@ export interface Option {
   };
 }
 
-export const create = ({ groups: results, meta, snapshot, query }: InitialParams, option: Option): Report => {
+export const create = ({ groups, meta, snapshot, query }: InitialParams, option: Option): Report => {
   const repository = createSnapshotRepository<Target.Group>(snapshot, option.snapshot);
   const averageList = option.exectime ? option.exectime.averageList : [];
 
-  const nextGroups = results.reduce<{ [groupName: string]: Target.Group }>((all, result) => {
+  const nextGroups = groups.reduce<{ [groupName: string]: Target.Group }>((all, result) => {
     return { ...all, [result.name]: generateGroup(result) };
   }, {});
 
@@ -105,7 +105,6 @@ export const create = ({ groups: results, meta, snapshot, query }: InitialParams
     let total = 1;
     const histories = repository.getHistories(query);
     const allCount = count === "all" ? histories.length : count;
-    console.log(JSON.stringify(histories, null, 2));
     histories.forEach(history => {
       if (total === allCount) {
         return;
