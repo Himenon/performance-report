@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.5.2"></a>
+## 0.5.2 (2020-11-18)
+
+
+### Bug Fixes
+
+* 平均値を出力するところを現在値を表示していた不具合の修正 ([#29](https://github.com/Himenon/performance-report/issues/29)) ([9995ef5](https://github.com/Himenon/performance-report/commit/9995ef5))
+
+
+
+
+
 <a name="0.5.1"></a>
 ## 0.5.1 (2020-11-18)
 
