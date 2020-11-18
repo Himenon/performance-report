@@ -60,6 +60,21 @@ export interface Option {
   };
 }
 
+export const getGroupComparisons = (
+  compareTargetHistory: History.Type<Target.Group> | undefined,
+  nextHistory: History.Type<Target.Group>,
+): GroupComparisons => {
+  return Object.entries(nextHistory.groups).reduce<GroupComparisons>((all, [currentGroupName, currentGroup]) => {
+    const previousGroup = Query.findPreviousGroup(compareTargetHistory, currentGroupName);
+    const comparisons = currentGroup.items.map(currentItem => {
+      const previousItem = previousGroup && Query.findPreviousItem(previousGroup, currentItem);
+      const comparison = Target.generateComparison(previousItem, currentItem);
+      return comparison;
+    });
+    return { ...all, [currentGroupName]: comparisons };
+  }, {});
+};
+
 export const create = ({ groups, meta, snapshot }: InitialParams, option: Option): Report => {
   const repository = Repository.create<Target.Group>(snapshot, option.snapshot);
   const averageList = option.exectime ? option.exectime.averageList : [];
@@ -75,17 +90,6 @@ export const create = ({ groups, meta, snapshot }: InitialParams, option: Option
 
   const previousHistory = repository.getLatestHistory(snapshot.query);
 
-  const getGroupComparisons = (compareTargetHistory: History.Type<Target.Group> | undefined): GroupComparisons => {
-    return Object.entries(nextHistory.groups).reduce<GroupComparisons>((all, [currentGroupName, currentGroup]) => {
-      const previousGroup = Query.findPreviousGroup(compareTargetHistory, currentGroupName);
-      const comparisons = currentGroup.items.map(currentItem => {
-        const comparison = Target.generateComparison(previousGroup && Query.findPreviousItem(previousGroup, currentItem), currentItem);
-        return comparison;
-      });
-      return { ...all, [currentGroupName]: comparisons };
-    }, {});
-  };
-
   /**
    * 複数のパターンで平均化されたデータ情報を取得する
    */
@@ -95,26 +99,27 @@ export const create = ({ groups, meta, snapshot }: InitialParams, option: Option
     }
     const histories = repository.getHistories(snapshot.query);
     return option.exectime.averageList.map(count => {
-      return getGroupComparisons(previousHistory && Calculator.Average.calculate(previousHistory, histories, count));
+      const targetHistory = previousHistory ? Calculator.Average.calculate(previousHistory, histories, count) : undefined;
+      return getGroupComparisons(targetHistory, nextHistory);
     });
   })();
 
   return {
-    getGroupComparisons: () => getGroupComparisons(previousHistory),
+    getGroupComparisons: () => getGroupComparisons(previousHistory, nextHistory),
     getMarkdownComparisons: () => {
-      const groupComparisons = getGroupComparisons(previousHistory);
+      const groupComparisons = getGroupComparisons(previousHistory, nextHistory);
       const section = (title: string, body: string) => {
         return [`## Exectime - ${title}`, body].join(EOL);
       };
       const sections = Object.entries(groupComparisons).map(([groupName, comparisons]) => {
         const data = comparisons.map(comparison => {
           // あるグループに属する、あるコマンドの平均Comparisonを取得する
-          const averageDiff = averageGroupComparisons.map((ave, idx) => {
-            const c = ave[groupName].find(item => item.execCommandName === comparison.execCommandName);
-            if (!c) {
+          const averageDiff: Array<Target.AverageColumn | undefined> = averageGroupComparisons.map((averageGroupComparison, idx) => {
+            const averageComparison = averageGroupComparison[groupName].find(item => item.execCommandName === comparison.execCommandName);
+            if (!averageComparison) {
               return;
             }
-            return { ...c, averageTimes: averageList[idx] };
+            return { ...averageComparison, averageTimes: averageList[idx] };
           });
           return Target.generateMarkdownRow(comparison, { averageDiff });
         });

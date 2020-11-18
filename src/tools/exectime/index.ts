@@ -50,22 +50,24 @@ const msToSec = (ms: number | undefined): number => {
   return ms / 1000;
 };
 
+export type AverageColumn = Comparison & { averageTimes: number | "all" | undefined };
+
 export interface AdditionalColumn {
   /** average Diff */
-  averageDiff: Array<(Comparison & { averageTimes: number | "all" | undefined }) | undefined>;
+  averageDiff: Array<AverageColumn | undefined>;
 }
 
-export const generateMarkdownRow = (c: Comparison, additionalColumn: AdditionalColumn): string[] => {
+export const generateMarkdownRow = (comparison: Comparison, additionalColumn: AdditionalColumn): string[] => {
   const averageColumn = additionalColumn.averageDiff
     .map(additionalComparison => [
-      decorateUnit(msToSec(additionalComparison && additionalComparison.currentExecuteDurationMs), "sec"),
+      decorateUnit(msToSec(additionalComparison && additionalComparison.prevExecuteDurationMs), "sec"), // 前回 = 平均
       decorateDiffText(additionalComparison && additionalComparison.execCommandDurationDiff, "%"),
     ])
     .flat();
   return [
-    c.execCommandName,
-    decorateUnit(msToSec(c.currentExecuteDurationMs), "sec"),
-    decorateUnit(msToSec(c.prevExecuteDurationMs), "sec"),
-    decorateDiffText(c.execCommandDurationDiff, "%"),
+    comparison.execCommandName,
+    decorateUnit(msToSec(comparison.currentExecuteDurationMs), "sec"),
+    decorateUnit(msToSec(comparison.prevExecuteDurationMs), "sec"),
+    decorateDiffText(comparison.execCommandDurationDiff, "%"),
   ].concat(averageColumn);
 };
