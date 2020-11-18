@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.4.0"></a>
+# 0.4.0 (2020-11-18)
+
+
+### Features
+
+* update config interface ([#25](https://github.com/Himenon/performance-report/issues/25)) ([3b91f82](https://github.com/Himenon/performance-report/commit/3b91f82))
+
+
+
+
+
 <a name="0.3.1"></a>
 
 ## 0.3.1 (2020-11-17)
