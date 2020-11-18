@@ -39,7 +39,7 @@ export const generateComparison = (previous: Item | undefined, current: Item): C
   };
 };
 
-export const markdownTableHeader: string[] = ["**Command**", "**Time diff**", "**prev time**", "**current time**"];
+export const markdownTableHeader: string[] = ["**Command**", "**current time**", "**prev time**", "**Time diff**"];
 
 export const markdownTableAlign: string[] = ["l", "r", "r", "r", "r", "r", "r"];
 
@@ -64,8 +64,8 @@ export const generateMarkdownRow = (c: Comparison, additionalColumn: AdditionalC
     .flat();
   return [
     c.execCommandName,
-    decorateDiffText(c.execCommandDurationDiff, "%"),
-    decorateUnit(msToSec(c.prevExecuteDurationMs), "sec"),
     decorateUnit(msToSec(c.currentExecuteDurationMs), "sec"),
+    decorateUnit(msToSec(c.prevExecuteDurationMs), "sec"),
+    decorateDiffText(c.execCommandDurationDiff, "%"),
   ].concat(averageColumn);
 };

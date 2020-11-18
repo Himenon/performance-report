@@ -1,5 +1,6 @@
 import { Octokit } from "@octokit/rest";
 import { getEnv } from "./env";
+import * as PerformanceReport from "../../lib";
 
 const botName = "github-actions[bot]";
 
@@ -44,7 +45,7 @@ export const create = () => {
     }
   };
 
-  const generateMeta = () => {
+  const generateMeta = (): { git: PerformanceReport.Exectime.Git.Meta } => {
     return {
       git: {
         ref: baseRef,

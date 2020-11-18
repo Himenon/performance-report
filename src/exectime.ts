@@ -1,16 +1,9 @@
 import { EOL } from "os";
 import MarkdownTable from "markdown-table";
-import {
-  createSnapshotRepository,
-  Exectime as Target,
-  History,
-  Meta,
-  findPreviousGroup,
-  findPreviousItem,
-  Query,
-  Option as SnapshotOption,
-  InitialParams as SnapshotInitialParams,
-} from "./tools/index";
+import { Git, Exectime as Target, History, Query } from "./tools";
+import * as Repository from "./repository";
+
+export { Repository, Git };
 
 export interface Measurement {
   [name: string]: {
@@ -26,10 +19,9 @@ export interface Group {
 }
 
 export interface InitialParams {
-  snapshot: SnapshotInitialParams;
-  query: Query;
+  snapshot: Repository.InitialParams;
   meta: {
-    git: Meta.Git;
+    git: Git.Meta;
   };
   groups: Group[];
 }
@@ -61,32 +53,32 @@ const generateGroup = (result: Group): Target.Group => {
 };
 
 export interface Option {
-  snapshot?: SnapshotOption;
+  snapshot?: Repository.Option;
   exectime?: {
     averageList: Array<number | "all">;
   };
 }
 
-export const create = ({ groups, meta, snapshot, query }: InitialParams, option: Option): Report => {
-  const repository = createSnapshotRepository<Target.Group>(snapshot, option.snapshot);
+export const create = ({ groups, meta, snapshot }: InitialParams, option: Option): Report => {
+  const repository = Repository.create<Target.Group>(snapshot, option.snapshot);
   const averageList = option.exectime ? option.exectime.averageList : [];
 
   const nextGroups = groups.reduce<{ [groupName: string]: Target.Group }>((all, result) => {
     return { ...all, [result.name]: generateGroup(result) };
   }, {});
 
-  const nextHistory: History<Target.Group> = {
+  const nextHistory: History.Type<Target.Group> = {
     meta,
     groups: nextGroups,
   };
 
-  const previousHistory = repository.getLatestHistory(query);
+  const previousHistory = repository.getLatestHistory(snapshot.query);
 
-  const getGroupComparisons = (compareTargetHistory: History<Target.Group> | undefined): GroupComparisons => {
+  const getGroupComparisons = (compareTargetHistory: History.Type<Target.Group> | undefined): GroupComparisons => {
     return Object.entries(nextHistory.groups).reduce<GroupComparisons>((all, [currentGroupName, currentGroup]) => {
-      const previousGroup = findPreviousGroup(compareTargetHistory, currentGroupName);
+      const previousGroup = Query.findPreviousGroup(compareTargetHistory, currentGroupName);
       const comparisons = currentGroup.items.map(currentItem => {
-        const comparison = Target.generateComparison(previousGroup && findPreviousItem(previousGroup, currentItem), currentItem);
+        const comparison = Target.generateComparison(previousGroup && Query.findPreviousItem(previousGroup, currentItem), currentItem);
         return comparison;
       });
       return { ...all, [currentGroupName]: comparisons };
@@ -97,13 +89,13 @@ export const create = ({ groups, meta, snapshot, query }: InitialParams, option:
    * 平均が算出されたHistoryデータを作成する
    * TODO 分割
    */
-  const generateAverage = (count: number | "all"): History<Target.Group> | undefined => {
+  const generateAverage = (count: number | "all"): History.Type<Target.Group> | undefined => {
     if (!previousHistory) {
       return undefined;
     }
-    const targetHistoryGroup: History<Target.Group> = JSON.parse(JSON.stringify(previousHistory));
+    const targetHistoryGroup: History.Type<Target.Group> = JSON.parse(JSON.stringify(previousHistory));
     let total = 1;
-    const histories = repository.getHistories(query);
+    const histories = repository.getHistories(snapshot.query);
     const allCount = count === "all" ? histories.length : count;
     histories.forEach(history => {
       if (total === allCount) {

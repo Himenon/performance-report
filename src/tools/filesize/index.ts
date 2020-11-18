@@ -53,12 +53,12 @@ export const bytesToKB = (byte: number): number => {
 
 export const markdownTableHeader: string[] = [
   "**File**",
-  "**File size Diff**",
-  "**Gzip size Diff**",
-  "**Prev file size**",
   "**Current file size**",
-  "**Prev gzip size**",
+  "**Prev file size**",
+  "**File size Diff**",
   "**Current gzip size**",
+  "**Prev gzip size**",
+  "**Gzip size Diff**",
 ];
 
 export const markdownTableAlign: string[] = ["l", "r", "r", "r", "r", "r", "r"];
@@ -66,12 +66,12 @@ export const markdownTableAlign: string[] = ["l", "r", "r", "r", "r", "r", "r"];
 export const generateMarkdownRow = (c: Comparison): string[] => {
   return [
     c.filename,
-    decorateDiffText(c.fileSizeDiff, "%"),
-    decorateDiffText(c.gzipFileSizeDiff, "%"),
-    decorateUnit(bytesToKB(c.prevFileSizeByte), "KB"),
     decorateUnit(bytesToKB(c.currentFileSizeByte), "KB"),
-    decorateUnit(bytesToKB(c.prevGzipSizeByte), "KB"),
+    decorateUnit(bytesToKB(c.prevFileSizeByte), "KB"),
+    decorateDiffText(c.fileSizeDiff, "%"),
     decorateUnit(bytesToKB(c.currentGzipFileSizeByte), "KB"),
+    decorateUnit(bytesToKB(c.prevGzipSizeByte), "KB"),
+    decorateDiffText(c.gzipFileSizeDiff, "%"),
   ];
 };
 

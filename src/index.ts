@@ -1,11 +1,9 @@
-import * as Meta from "./tools/meta";
 import * as Exectime from "./exectime";
 import * as Filesize from "./filesize";
-import { Option as SnapshotOption, Query } from "./tools";
 import * as GitControl from "@himenon/git-control-js";
 import * as rimraf from "rimraf";
 
-export { Meta, Exectime, Filesize, Query, SnapshotOption };
+export { Exectime, Filesize };
 
 export interface Git extends Omit<GitControl.IO.Params, "cmd" | "workingDir" | "outputDir"> {
   committer: {

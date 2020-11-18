@@ -1,4 +1,4 @@
-export interface Git {
+export interface Meta {
   ref: string;
   mergeDateAt?: string;
   owner: string;

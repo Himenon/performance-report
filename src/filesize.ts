@@ -1,17 +1,10 @@
 import * as path from "path";
 import { EOL } from "os";
 import MarkdownTable from "markdown-table";
-import {
-  createSnapshotRepository,
-  Filesize as Target,
-  History,
-  Meta,
-  findPreviousGroup,
-  findPreviousItem,
-  Query,
-  Option as SnapshotOption,
-  InitialParams as SnapshotInitialParams,
-} from "./tools";
+import { Git, Filesize as Target, History, Query } from "./tools";
+import * as Repository from "./repository";
+
+export { Repository, Git };
 
 export interface Group {
   name: string;
@@ -25,10 +18,9 @@ export interface Group {
 }
 
 export interface InitialParams {
-  snapshot: SnapshotInitialParams;
-  query: Query;
+  snapshot: Repository.InitialParams;
   meta: {
-    git: Meta.Git;
+    git: Git.Meta;
   };
   groups: Group[];
 }
@@ -66,29 +58,29 @@ const generateGroup = (group: Group, option: GroupOption = {}): Target.Group => 
 export const TableHeader: string[] = ["**File**", "**Filesize Diff**", "**Current Size**", "**Prev Size**", "**ENV**", "compare"];
 
 export interface Option {
-  snapshot?: SnapshotOption;
+  snapshot?: Repository.Option;
   filesize?: GroupOption;
 }
 
-export const create = ({ groups, meta, snapshot, query }: InitialParams, option: Option): Report => {
-  const repository = createSnapshotRepository<Target.Group>(snapshot, option.snapshot);
+export const create = ({ groups, meta, snapshot }: InitialParams, option: Option): Report => {
+  const repository = Repository.create<Target.Group>(snapshot, option.snapshot);
 
   const nextGroups = groups.reduce<{ [groupName: string]: Target.Group }>((all, pkg) => {
     return { ...all, [pkg.name]: generateGroup(pkg, option.filesize) };
   }, {});
 
-  const nextHistory: History<Target.Group> = {
+  const nextHistory: History.Type<Target.Group> = {
     meta,
     groups: nextGroups,
   };
 
-  const previousHistory = repository.getLatestHistory(query);
+  const previousHistory = repository.getLatestHistory(snapshot.query);
 
   const getGroupComparisons = (): GroupComparisons => {
     return Object.entries(nextHistory.groups).reduce<GroupComparisons>((all, [currentGroupName, currentGroup]) => {
       const comparisons = currentGroup.items.map(currentItem => {
-        const previousGroup = findPreviousGroup(previousHistory, currentGroupName);
-        const comparison = Target.generateComparison(previousGroup && findPreviousItem(previousGroup, currentItem), currentItem);
+        const previousGroup = Query.findPreviousGroup(previousHistory, currentGroupName);
+        const comparison = Target.generateComparison(previousGroup && Query.findPreviousItem(previousGroup, currentItem), currentItem);
         return comparison;
       });
       return { ...all, [currentGroupName]: comparisons };

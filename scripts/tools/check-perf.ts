@@ -36,7 +36,7 @@ export const createPerformanceReport = async ({ isPullRequest, isLocal }: Option
     },
   };
 
-  const query = {
+  const query: PerformanceReport.Filesize.Repository.Query = {
     git: {
       base: {
         ref: baseRef,
@@ -47,9 +47,9 @@ export const createPerformanceReport = async ({ isPullRequest, isLocal }: Option
   const filesize: PerformanceReport.Filesize.InitialParams = {
     snapshot: {
       filename: path.join(Config.workingDirectory, pkg.name, Config.snapshot.filesize),
+      query,
     },
     meta,
-    query,
     groups: [
       {
         name: `${pkg.name}-seed`,
@@ -96,9 +96,9 @@ export const createPerformanceReport = async ({ isPullRequest, isLocal }: Option
   const exectime: PerformanceReport.Exectime.InitialParams = {
     snapshot: {
       filename: path.join(Config.workingDirectory, pkg.name, Config.snapshot.exectime),
+      query,
     },
     meta,
-    query,
     groups: [
       {
         name: pkg.name,
