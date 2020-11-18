@@ -19,7 +19,7 @@ export interface Measurement {
   };
 }
 
-export interface Result {
+export interface Group {
   name: string;
   description?: string;
   measurement: Measurement;
@@ -31,7 +31,7 @@ export interface InitialParams {
   meta: {
     git: Meta.Git;
   };
-  results: Result[];
+  groups: Group[];
 }
 
 export type GroupComparisons = { [groupName: string]: Target.Comparison[] };
@@ -52,7 +52,7 @@ const generateItems = (measurement: Measurement): Target.Item[] => {
   });
 };
 
-const generateGroup = (result: Result): Target.Group => {
+const generateGroup = (result: Group): Target.Group => {
   return {
     name: result.name,
     description: result.description,
@@ -67,7 +67,7 @@ export interface Option {
   };
 }
 
-export const create = ({ results, meta, snapshot, query }: InitialParams, option: Option): Report => {
+export const create = ({ groups: results, meta, snapshot, query }: InitialParams, option: Option): Report => {
   const repository = createSnapshotRepository<Target.Group>(snapshot, option.snapshot);
   const averageList = option.exectime ? option.exectime.averageList : [];
 

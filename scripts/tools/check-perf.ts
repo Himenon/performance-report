@@ -50,7 +50,7 @@ export const createPerformanceReport = async ({ isPullRequest, isLocal }: Option
     },
     meta,
     query,
-    packages: [
+    groups: [
       {
         name: `${pkg.name}-seed`,
         version: `${pkg.version}`,
@@ -99,7 +99,7 @@ export const createPerformanceReport = async ({ isPullRequest, isLocal }: Option
     },
     meta,
     query,
-    results: [
+    groups: [
       {
         name: pkg.name,
         description: "self repository performance report.",

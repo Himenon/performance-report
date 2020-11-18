@@ -15,11 +15,9 @@ export interface Item {
 }
 
 export interface Group {
-  /** Bundle Name */
   name: string;
-  /** Bundle Version */
   version: string;
-  /** Bundle Files */
+  description?: string;
   items: Item[];
 }
 

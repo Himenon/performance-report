@@ -13,9 +13,10 @@ import {
   InitialParams as SnapshotInitialParams,
 } from "./tools";
 
-export interface Package {
+export interface Group {
   name: string;
   version: string;
+  description?: string;
   items: {
     [name: string]: {
       absolutePath: string;
@@ -29,7 +30,7 @@ export interface InitialParams {
   meta: {
     git: Meta.Git;
   };
-  packages: Package[];
+  groups: Group[];
 }
 
 export type GroupComparisons = { [groupName: string]: Target.Comparison[] };
@@ -44,8 +45,8 @@ export interface GroupOption {
   applicationRoot?: string;
 }
 
-const generateGroup = (pkg: Package, option: GroupOption = {}): Target.Group => {
-  const items: Target.Item[] = Object.entries(pkg.items).map(([name, item]) => {
+const generateGroup = (group: Group, option: GroupOption = {}): Target.Group => {
+  const items: Target.Item[] = Object.entries(group.items).map(([name, item]) => {
     const profile = Target.generateProfile(item.absolutePath);
     return {
       name,
@@ -55,8 +56,9 @@ const generateGroup = (pkg: Package, option: GroupOption = {}): Target.Group => 
     };
   });
   return {
-    name: pkg.name,
-    version: pkg.version,
+    name: group.name,
+    description: group.description,
+    version: group.version,
     items,
   };
 };
@@ -68,7 +70,7 @@ export interface Option {
   filesize?: GroupOption;
 }
 
-export const create = ({ packages, meta, snapshot, query }: InitialParams, option: Option): Report => {
+export const create = ({ groups: packages, meta, snapshot, query }: InitialParams, option: Option): Report => {
   const repository = createSnapshotRepository<Target.Group>(snapshot, option.snapshot);
 
   const nextGroups = packages.reduce<{ [groupName: string]: Target.Group }>((all, pkg) => {

@@ -476,10 +476,10 @@
     unique-filename "^1.1.1"
     which "^1.3.1"
 
-"@himenon/exectime@0.2.0":
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/@himenon/exectime/-/exectime-0.2.0.tgz#1bb002c56e09484b67ad3ac05efa9d4d98a7f13f"
-  integrity sha512-27qiXJ2cNRncgHkeDcP4QLUwBSHLFCU1GplqARSGS5T2F9PUTOP3LzQaSKJdJzPXDYoW9KqD8z68nZLoYhHLlA==
+"@himenon/exectime@0.2.1":
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/@himenon/exectime/-/exectime-0.2.1.tgz#260e064c1be4c498e37bff43a0cd54c77295cbc0"
+  integrity sha512-Lo0q5lR6t8xP08oUvRAkjY142OUOYNoXO6AFji9BeMoA/idG/NQpYeM6KvEwlh1K23YgUE2JrGO5PcgC9Gp0mg==
   dependencies:
     commander "6.2.0"
     execa "4.1.0"

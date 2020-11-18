@@ -7,10 +7,11 @@ import * as rimraf from "rimraf";
 
 export { Meta, Exectime, Filesize, Query, SnapshotOption };
 
-export interface GitParams {
-  config: Omit<GitControl.IO.Params, "cmd" | "workingDir" | "outputDir">;
-  username: string;
-  email: string;
+export interface Git extends Omit<GitControl.IO.Params, "cmd" | "workingDir" | "outputDir"> {
+  committer: {
+    username: string;
+    email: string;
+  };
 }
 
 export interface Config {
@@ -18,7 +19,7 @@ export interface Config {
     exectime?: Exectime.InitialParams;
     filesize?: Filesize.InitialParams;
   };
-  git: GitParams;
+  git: Git;
   applicationRoot: string;
   workingDirectory: string;
   commitMessage?: string;
@@ -45,12 +46,13 @@ export type Option = Filesize.Option & Exectime.Option;
 
 export const generate = async (params: Config, option: Option = {}): Promise<Report> => {
   const { workingDirectory, git, reporter } = params;
+  const { committer, ...gitConfig } = git;
   rimraf.sync(workingDirectory);
   const cmd = GitControl.Command.create(workingDirectory);
-  const io = GitControl.IO.create({ ...git.config, workingDir: workingDirectory, cmd });
+  const io = GitControl.IO.create({ ...gitConfig, workingDir: workingDirectory, cmd });
   await io.setup();
-  await io.setConfig("user.name", git.username, "local");
-  await io.setConfig("user.email", git.email, "local");
+  await io.setConfig("user.name", committer.username, "local");
+  await io.setConfig("user.email", committer.email, "local");
   const comparison: Comparison = {};
   const markdown: Markdown = {};
   if (reporter.filesize) {
