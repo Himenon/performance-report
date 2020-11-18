@@ -2,6 +2,7 @@ import { EOL } from "os";
 import MarkdownTable from "markdown-table";
 import { Git, Exectime as Target, History, Query } from "./tools";
 import * as Repository from "./repository";
+import * as Calculator from "./calculator";
 
 export { Repository, Git };
 
@@ -86,54 +87,15 @@ export const create = ({ groups, meta, snapshot }: InitialParams, option: Option
   };
 
   /**
-   * 平均が算出されたHistoryデータを作成する
-   * TODO 分割
-   */
-  const generateAverage = (count: number | "all"): History.Type<Target.Group> | undefined => {
-    if (!previousHistory) {
-      return undefined;
-    }
-    const targetHistoryGroup: History.Type<Target.Group> = JSON.parse(JSON.stringify(previousHistory));
-    let total = 1;
-    const histories = repository.getHistories(snapshot.query);
-    const allCount = count === "all" ? histories.length : count;
-    histories.forEach(history => {
-      if (total === allCount) {
-        return;
-      }
-      if (history.meta.git.sha === targetHistoryGroup.meta.git.sha) {
-        return;
-      }
-      Object.entries(history.groups).forEach(([groupName, group]) => {
-        const targetGroup = targetHistoryGroup.groups[groupName];
-        group.items.forEach(item => {
-          const targetItem = targetGroup.items.find(targetItem => targetItem.name == item.name);
-          if (targetItem) {
-            targetItem.durationMs += item.durationMs;
-            targetItem.startDateUnixTimeMs += item.startDateUnixTimeMs;
-          }
-        });
-      });
-      total += 1;
-    });
-    Object.keys(targetHistoryGroup.groups).forEach(groupName => {
-      for (let index = 0; index < targetHistoryGroup.groups[groupName].items.length; index++) {
-        targetHistoryGroup.groups[groupName].items[index].durationMs /= allCount;
-        targetHistoryGroup.groups[groupName].items[index].startDateUnixTimeMs /= allCount;
-      }
-    });
-    return targetHistoryGroup;
-  };
-
-  /**
    * 複数のパターンで平均化されたデータ情報を取得する
    */
   const averageGroupComparisons = (() => {
     if (!option.exectime) {
       return [];
     }
+    const histories = repository.getHistories(snapshot.query);
     return option.exectime.averageList.map(count => {
-      return getGroupComparisons(generateAverage(count));
+      return getGroupComparisons(previousHistory && Calculator.Average.calculate(previousHistory, histories, count));
     });
   })();
 
