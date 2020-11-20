@@ -1,5 +1,6 @@
 import { EOL } from "os";
 import MarkdownTable from "markdown-table";
+import * as MarkdownUtil from "./tools/markdown";
 import { Git, Exectime as Target, History, Query } from "./tools";
 import * as Repository from "./repository";
 import * as Calculator from "./calculator";
@@ -31,7 +32,7 @@ export type GroupComparisons = { [groupName: string]: Target.Comparison[] };
 
 export interface Report {
   getGroupComparisons: () => GroupComparisons;
-  getMarkdownComparisons: () => string;
+  getMarkdownComparisons: (gitHubBaseUrl: string) => string;
   update: () => string | undefined;
 }
 
@@ -106,10 +107,18 @@ export const create = ({ groups, meta, snapshot }: InitialParams, option: Option
 
   return {
     getGroupComparisons: () => getGroupComparisons(previousHistory, nextHistory),
-    getMarkdownComparisons: () => {
+    getMarkdownComparisons: gitHubBaseUrl => {
+      const repositoryUrl = MarkdownUtil.generateRepositoryUrl({ baseUrl: gitHubBaseUrl, owner: meta.git.owner, repo: meta.git.repoName });
+      const compareUrl =
+        previousHistory &&
+        MarkdownUtil.generateCompareUrl({
+          repositoryUrl,
+          baseSha: previousHistory.meta.git.sha,
+          headSha: nextHistory.meta.git.sha,
+        });
       const groupComparisons = getGroupComparisons(previousHistory, nextHistory);
       const section = (title: string, body: string) => {
-        return [`## Exectime - ${title}`, body].join(EOL);
+        return [`## Exectime - ${title}`, compareUrl && `<${compareUrl}>`, body].filter(Boolean).join(EOL + EOL);
       };
       const sections = Object.entries(groupComparisons).map(([groupName, comparisons]) => {
         const data = comparisons.map(comparison => {

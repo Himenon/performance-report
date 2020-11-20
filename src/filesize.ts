@@ -2,6 +2,7 @@ import * as path from "path";
 import { EOL } from "os";
 import MarkdownTable from "markdown-table";
 import { Git, Filesize as Target, History, Query } from "./tools";
+import * as MarkdownUtil from "./tools/markdown";
 import * as Repository from "./repository";
 
 export { Repository, Git };
@@ -27,9 +28,22 @@ export interface InitialParams {
 
 export type GroupComparisons = { [groupName: string]: Target.Comparison[] };
 
+export interface MarkdownComparisonOption {
+  previous: {
+    git: {
+      sha: string;
+    };
+  };
+  current: {
+    git: {
+      sha: string;
+    };
+  };
+}
+
 export interface Report {
   getGroupComparisons: () => GroupComparisons;
-  getMarkdownComparisons: () => string;
+  getMarkdownComparisons: (gitHubBaseUrl: string) => string;
   update: () => string | undefined;
 }
 
@@ -89,10 +103,18 @@ export const create = ({ groups, meta, snapshot }: InitialParams, option: Option
 
   return {
     getGroupComparisons,
-    getMarkdownComparisons: () => {
+    getMarkdownComparisons: gitHubBaseUrl => {
+      const repositoryUrl = MarkdownUtil.generateRepositoryUrl({ baseUrl: gitHubBaseUrl, owner: meta.git.owner, repo: meta.git.repoName });
+      const compareUrl =
+        previousHistory &&
+        MarkdownUtil.generateCompareUrl({
+          repositoryUrl,
+          baseSha: previousHistory.meta.git.sha,
+          headSha: nextHistory.meta.git.sha,
+        });
       const groupComparisons = getGroupComparisons();
       const section = (title: string, body: string) => {
-        return [`## Filesize - ${title}`, body].join(EOL);
+        return [`## Filesize - ${title}`, compareUrl && `<${compareUrl}>`, body].filter(Boolean).join(EOL + EOL);
       };
       const sections = Object.entries(groupComparisons).map(([groupName, comparisons]) => {
         const data = [Target.markdownTableHeader].concat(comparisons.map(Target.generateMarkdownRow));

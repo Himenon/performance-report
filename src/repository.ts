@@ -15,6 +15,7 @@ export interface Query {
     base: {
       ref: string;
     };
+    revList?: string[];
   };
 }
 
@@ -55,34 +56,20 @@ export const create = <G extends History.Group>({ filename }: InitialParams, opt
     return createDefaultSnapShpt();
   };
 
-  /**
-   * 最新が先頭になるようにソートする
-   */
-  const compareDate = (a?: string, b?: string): 0 | 1 | -1 => {
-    if (a && b) {
-      // rightが最新の場合(大きい場合)、rightを添字の小さい方に移動するため、負の値を返す
-      return new Date(a) < new Date(b) ? 1 : -1;
-    }
-    // rightが添字がない場合、leftを負にする（添字を減らす）
-    if (a && !b) {
-      return -1;
-    }
-    // leftが添え字がない場合、leftを正にする（添字を増やす）
-    if (!a && b) {
-      return 1;
-    }
-    return 0;
-  };
-
   const snapshot = getSnapshot(filename);
+
+  const sortWithKeys = (sortKeys: string[]) => (a: string, b: string) => {
+    return sortKeys.indexOf(a) - sortKeys.indexOf(b);
+  };
 
   const hasSameSHA = (sha: string): boolean => {
     return !!snapshot.histories.find(history => history.meta.git.sha === sha);
   };
 
   const getHistories = (query: Query) => {
+    const sortHistoryByRevList = sortWithKeys(query.git.revList || []);
     return snapshot.histories
-      .sort((a, b) => compareDate(a.meta.git.mergeDateAt, b.meta.git.mergeDateAt))
+      .sort((a, b) => sortHistoryByRevList(a.meta.git.sha, b.meta.git.sha))
       .filter(history => {
         return history.meta.git.ref === query.git.base.ref;
       });
