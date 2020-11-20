@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.5.3"></a>
+## 0.5.3 (2020-11-20)
+
+
+### Bug Fixes
+
+* **sort:** commit hashでsortを行う ([#31](https://github.com/Himenon/performance-report/issues/31)) ([e660e60](https://github.com/Himenon/performance-report/commit/e660e60))
+
+
+
+
+
 <a name="0.5.2"></a>
 ## 0.5.2 (2020-11-18)
 
