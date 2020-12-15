@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+<a name="0.5.4"></a>
+## 0.5.4 (2020-12-15)
+
+
+### Documentation
+
+* update ([#32](https://github.com/Himenon/performance-report/issues/32)) ([f5d1946](https://github.com/Himenon/performance-report/commit/f5d1946))
+
+
+
+
+
 <a name="0.5.3"></a>
 ## 0.5.3 (2020-11-20)
 

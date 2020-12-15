@@ -1,6 +1,6 @@
 {
   "name": "@himenon/performance-report",
-  "version": "0.5.3",
+  "version": "0.5.4",
   "private": true,
   "description": "Measure the difference in performance. In addition, Git Repository is used as the save destination of the measurement result.",
   "keywords": [
