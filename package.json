@@ -2,10 +2,12 @@
   "name": "@himenon/performance-report",
   "version": "0.5.3",
   "private": true,
-  "description": "generate file size diff from github",
+  "description": "Measure the difference in performance. In addition, Git Repository is used as the save destination of the measurement result.",
   "keywords": [
     "filesize",
     "diff",
+    "exectime",
+    "performance",
     "github"
   ],
   "homepage": "https://github.com/Himenon/performance-report#readme",
